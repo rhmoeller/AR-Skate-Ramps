@@ -10,7 +10,7 @@ import UIKit
 import SceneKit
 import ARKit
 
-class RampPlacerVC: UIViewController, ARSCNViewDelegate {
+class RampPlacerVC: UIViewController, ARSCNViewDelegate, UIPopoverPresentationControllerDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     
@@ -19,26 +19,23 @@ class RampPlacerVC: UIViewController, ARSCNViewDelegate {
         // Set the view's delegate
         sceneView.delegate = self
         // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
+        sceneView.showsStatistics = false
         // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        let scene = SCNScene(named: "art.scnassets/pipe.dae")!
         // Set the scene to the view
         sceneView.scene = scene
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
-
         // Run the view's session
         sceneView.session.run(configuration)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
         // Pause the view's session
         sceneView.session.pause()
     }
@@ -68,4 +65,24 @@ class RampPlacerVC: UIViewController, ARSCNViewDelegate {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
     }
+    
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .none
+    }
+    
+//    @IBOutlet weak var rampButtonPressed: UIButton!
+    @IBAction func rampButtonPressed(_ sender: UIButton) {
+        let rampPickerVC = RampPickerVC(size: CGSize(width: 250, height: 500))
+        rampPickerVC.rampPlacerVC = self
+        rampPickerVC.modalPresentationStyle = .popover
+        rampPickerVC.popoverPresentationController?.delegate = self
+        present(rampPickerVC, animated: true, completion: nil)
+        rampPickerVC.popoverPresentationController?.sourceView = sender
+        rampPickerVC.popoverPresentationController?.sourceRect = sender.bounds
+    }
+    
+    func onRampSelected(_ rampName: String) {
+        
+    }
+    
 }
